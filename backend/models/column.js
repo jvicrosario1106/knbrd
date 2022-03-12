@@ -3,6 +3,10 @@ const Schema = mongoose.Schema;
 
 const columnSchema = Schema(
   {
+    project: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Project",
+    },
     name: {
       type: String,
     },
