@@ -17,7 +17,12 @@ app.use(express.json({ limit: "100mb" }));
 
 // CORS configuration
 
-app.use(cors());
+app.use(
+  cors({
+    origin: ["http://localhost:3000"],
+    credentials: true,
+  })
+);
 
 // MongoDB Connection
 
