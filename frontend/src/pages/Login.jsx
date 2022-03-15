@@ -1,9 +1,27 @@
-import React from "react";
+import React, { useState } from "react";
 import LoginBackground from "../images/login.jpg";
 import LoginBackgroundTwo from "../images/login2.svg";
 import { Box, Paper, Typography, TextField, Button } from "@mui/material";
+import { useDispatch } from "react-redux";
+import { loginUser } from "../slice/authSlice";
 
 const Login = () => {
+  const dispatch = useDispatch();
+
+  const [credential, setCredential] = useState({
+    email: "",
+    password: "",
+  });
+
+  const onChangeCredentials = (e) => {
+    setCredential({ ...credential, [e.target.name]: e.target.value });
+  };
+
+  const submitLogin = (e) => {
+    e.preventDefault();
+    dispatch(loginUser(credential));
+  };
+
   return (
     <div>
       <Box
@@ -32,21 +50,38 @@ const Login = () => {
             </Typography>{" "}
           </Typography>
 
-          <Typography sx={{ mt: 3, mb: 1 }} variant="body1">
-            Email Address
-          </Typography>
-          <TextField
-            size="small"
-            fullWidth
-            label="Enter Email"
-            InputLabelProps={{}}
-          />
-          <Typography sx={{ mt: 1, mb: 1 }}>Password</Typography>
-          <TextField size="small" fullWidth label="Enter Password" />
+          <form onSubmit={(e) => submitLogin(e)}>
+            <Typography sx={{ mt: 3, mb: 1 }} variant="body1">
+              Email Address
+            </Typography>
+            <TextField
+              type="email"
+              size="small"
+              name="email"
+              fullWidth
+              label="Enter Email"
+              value={credential.email}
+              onChange={(e) => onChangeCredentials(e)}
+            />
+            <Typography sx={{ mt: 1, mb: 1 }}>Password</Typography>
+            <TextField
+              type="password"
+              size="small"
+              fullWidth
+              name="password"
+              label="Enter Password"
+              value={credential.password}
+              onChange={(e) => onChangeCredentials(e)}
+            />
 
-          <Button variant="contained" sx={{ mt: 2, float: "right" }}>
-            Log In
-          </Button>
+            <Button
+              type="submit"
+              variant="contained"
+              sx={{ mt: 2, float: "right" }}
+            >
+              Log In
+            </Button>
+          </form>
         </Paper>
       </Box>
     </div>

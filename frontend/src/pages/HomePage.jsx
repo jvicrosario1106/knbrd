@@ -1,31 +1,13 @@
-import {
-  Box,
-  Button,
-  Typography,
-  IconButton,
-  Divider,
-  Container,
-} from "@mui/material";
-import { FiPlus } from "react-icons/fi";
+import { useState, useEffect } from "react";
+import { Box, Typography, Divider, Container } from "@mui/material";
 import React from "react";
+import AddProject from "../components/AddProject";
 
 const HomePage = () => {
+  const [name, setName] = useState("");
+
   return (
     <div>
-      {/* <Box>
-        <Typography fontWeight={"bold"} variant="h4">
-          Customer Project Management
-        </Typography>
-        <Box sx={{ mb: 3, mt: 3 }}>
-          <IconButton>
-            <FiUserPlus />
-          </IconButton>
-          <Button size="small" variant="contained">
-            New Column
-          </Button>
-        </Box>
-        <Divider />
-      </Box> */}
       <Typography variant="h4" fontWeight={"bold"}>
         Welcome to Knbrd !
       </Typography>
@@ -34,9 +16,7 @@ const HomePage = () => {
       </Typography>
 
       <Box sx={{ mt: 1.5, mb: 1.5 }}>
-        <Button startIcon={<FiPlus />} variant="contained" size="small">
-          New Project
-        </Button>
+        <AddProject name={name} setName={setName} />
       </Box>
 
       <Divider />
