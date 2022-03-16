@@ -31,7 +31,53 @@ router.get("/", protectedRoutes, async (req, res) => {
       {
         $project: { user: { password: 0 } },
       },
+      {
+        $sort: { createdAt: -1 },
+      },
     ]);
+
+    res.status(200).json(projects);
+  } catch (err) {
+    res.status(400).json({
+      message: "Unable to get the Projects",
+    });
+  }
+});
+
+router.get("/:id", protectedRoutes, async (req, res) => {
+  const user = req.user._id;
+  const { id } = req.params;
+
+  try {
+    const getProject = await Project.findById(id);
+    const projects = await Project.aggregate([
+      {
+        $match: { _id: getProject._id },
+      },
+      {
+        $lookup: {
+          from: "columns",
+          as: "columns",
+          localField: "columns",
+          foreignField: "_id",
+        },
+      },
+      {
+        $lookup: {
+          from: "users",
+          as: "user",
+          localField: "user",
+          foreignField: "_id",
+        },
+      },
+      {
+        $project: { user: { password: 0 } },
+      },
+      {
+        $sort: { createdAt: -1 },
+      },
+    ]);
+
     res.status(200).json(projects);
   } catch (err) {
     res.status(400).json({
@@ -43,6 +89,7 @@ router.get("/", protectedRoutes, async (req, res) => {
 router.post("/", protectedRoutes, async (req, res) => {
   const user = req.user._id;
   const { name } = req.body;
+  console.log(req.body);
 
   try {
     const project = await Project.create({ user: user, name });

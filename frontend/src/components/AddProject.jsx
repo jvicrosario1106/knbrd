@@ -6,7 +6,7 @@ import Modal from "@mui/material/Modal";
 import { FiPlus } from "react-icons/fi";
 import { TextField } from "@mui/material";
 
-const AddProject = ({ name, setName }) => {
+const AddProject = ({ name, setName, submitProject }) => {
   const style = {
     position: "absolute",
     top: "50%",
@@ -36,24 +36,26 @@ const AddProject = ({ name, setName }) => {
           <Typography id="modal-modal-title" variant="h6" component="h2">
             New Project
           </Typography>
-
-          <TextField
-            type="text"
-            size="small"
-            fullWidth
-            label="Project Name"
-            sx={{ mt: 2 }}
-            value={name}
-            name="name"
-            onChange={(e) => setName(e.target.value)}
-          />
-          <Button
-            size="small"
-            sx={{ float: "right", mt: 1 }}
-            variant="contained"
-          >
-            Add Project
-          </Button>
+          <form onSubmit={(e) => submitProject(e)}>
+            <TextField
+              type="text"
+              size="small"
+              fullWidth
+              label="Project Name"
+              sx={{ mt: 2 }}
+              value={name}
+              name="name"
+              onChange={(e) => setName(e.target.value)}
+            />
+            <Button
+              type="submit"
+              size="small"
+              sx={{ float: "right", mt: 1 }}
+              variant="contained"
+            >
+              Add Project
+            </Button>
+          </form>
         </Box>
       </Modal>
     </div>

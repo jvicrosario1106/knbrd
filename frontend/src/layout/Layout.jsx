@@ -1,6 +1,5 @@
 import React from "react";
 import {
-  Button,
   AppBar,
   Toolbar,
   Drawer,
@@ -73,6 +72,7 @@ const Layout = ({ children }) => {
               <List sx={{ ml: 1, mr: 1 }}>
                 {paths.map((path) => (
                   <ListItem
+                    key={path.path}
                     button
                     onClick={() => navigate(path.path)}
                     sx={

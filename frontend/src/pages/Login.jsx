@@ -2,11 +2,15 @@ import React, { useState } from "react";
 import LoginBackground from "../images/login.jpg";
 import LoginBackgroundTwo from "../images/login2.svg";
 import { Box, Paper, Typography, TextField, Button } from "@mui/material";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { loginUser } from "../slice/authSlice";
 
 const Login = () => {
   const dispatch = useDispatch();
+
+  const { isSuccess, isFailed, isLoading } = useSelector(
+    (state) => state.authReducer
+  );
 
   const [credential, setCredential] = useState({
     email: "",
@@ -75,11 +79,12 @@ const Login = () => {
             />
 
             <Button
+              disabled={isLoading ? true : false}
               type="submit"
               variant="contained"
               sx={{ mt: 2, float: "right" }}
             >
-              Log In
+              {isLoading ? "Logging In" : "Log In"}
             </Button>
           </form>
         </Paper>
