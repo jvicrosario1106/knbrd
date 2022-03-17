@@ -49,6 +49,19 @@ export const getProject = createAsyncThunk(
   }
 );
 
+export const addColumn = createAsyncThunk(
+  "project/addColumn",
+  async (column, thunkAPI) => {
+    try {
+      const response = await API_URL.post("/api/columns", column);
+      return response.data;
+    } catch (err) {
+      const { message } = err.response.data;
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
 const initialState = {
   isCreated: null,
   isUpdated: null,
@@ -62,6 +75,16 @@ const initialState = {
 const projectReducer = createSlice({
   name: "projects",
   initialState,
+  reducers: {
+    reorder: (state, action) => {
+      const { destination, draggableId, source } = action.payload;
+      const item = Array.from(state.projects[0].columns);
+      const [removedItem] = item.splice(source.index, 1);
+      item.splice(destination.index, 0, removedItem);
+      state.projects[0].columns = item;
+    },
+  },
+
   extraReducers: (builder) => {
     builder
       .addCase(getProjects.pending, (state, action) => {
@@ -139,8 +162,37 @@ const projectReducer = createSlice({
         state.isSuccess = false;
         state.isLoading = false;
         state.isFailed = true;
+      })
+
+      .addCase(addColumn.pending, (state, action) => {
+        state.isCreated = false;
+        state.isUpdated = false;
+        state.isDeleted = false;
+        state.isSuccess = false;
+        // state.isLoading = true;
+        state.isFailed = false;
+      })
+      .addCase(addColumn.fulfilled, (state, action) => {
+        state.isCreated = false;
+        state.isUpdated = false;
+        state.isDeleted = false;
+        state.isSuccess = true;
+        state.isLoading = false;
+        state.isFailed = false;
+        state.projects.length > 0 &&
+          state.projects[0].columns.unshift(action.payload);
+      })
+      .addCase(addColumn.rejected, (state, action) => {
+        state.isCreated = false;
+        state.isUpdated = false;
+        state.isDeleted = false;
+        state.isSuccess = false;
+        state.isLoading = false;
+        state.isFailed = true;
       });
   },
 });
+
+export const { reorder } = projectReducer.actions;
 
 export default projectReducer.reducer;

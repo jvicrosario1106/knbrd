@@ -5,15 +5,10 @@ const Column = require("../models/column");
 const Project = require("../models/project");
 
 router.post("/", async (req, res) => {
-  const { project, name, order, task } = req.body;
+  const { project, name } = req.body;
 
   try {
-    const createColumn = await Column.create({
-      project,
-      name,
-      order,
-      task,
-    });
+    const createColumn = await Column.create(req.body);
 
     if (createColumn) {
       const updateProject = await Project.updateOne(

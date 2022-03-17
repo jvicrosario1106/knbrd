@@ -12,6 +12,7 @@ const columnSchema = Schema(
     },
     order: {
       type: Number,
+      default: 0,
     },
     task: [{ type: mongoose.Schema.Types.ObjectId, ref: "Task" }],
   },

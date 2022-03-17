@@ -102,6 +102,7 @@ const Label = ({
                       marginBottom: 1,
                       borderBottom: "1px solid rgba(0,0,0,0.1)",
                     }}
+                    key={label._id}
                   >
                     <Typography
                       style={{

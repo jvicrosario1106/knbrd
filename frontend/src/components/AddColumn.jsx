@@ -6,7 +6,7 @@ import Modal from "@mui/material/Modal";
 import { FiLayers } from "react-icons/fi";
 import { TextField } from "@mui/material";
 
-const AddColumn = () => {
+const AddColumn = ({ name, setName, submitColumn }) => {
   const style = {
     position: "absolute",
     top: "50%",
@@ -41,16 +41,16 @@ const AddColumn = () => {
           <Typography id="modal-modal-title" variant="h6" component="h2">
             Add Column
           </Typography>
-          <form>
+          <form onSubmit={(e) => submitColumn(e)}>
             <TextField
               type="text"
               size="small"
               fullWidth
               label="Column Name"
               sx={{ mt: 2 }}
-              //   value={name}
+              value={name}
               name="name"
-              //   onChange={(e) => setName(e.target.value)}
+              onChange={(e) => setName(e.target.value)}
             />
             <Button
               type="submit"
