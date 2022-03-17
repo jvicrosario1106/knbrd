@@ -40,3 +40,4 @@ mongoose
 app.use("/api/auth", require("./routes/auth"));
 app.use("/api/projects", require("./routes/project"));
 app.use("/api/columns", require("./routes/column"));
+app.use("/api/labels", require("./routes/label"));

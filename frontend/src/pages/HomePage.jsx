@@ -1,5 +1,13 @@
 import { useState, useEffect } from "react";
-import { Box, Typography, Divider, Container, Grid, Chip } from "@mui/material";
+import {
+  Box,
+  Typography,
+  Divider,
+  Container,
+  Grid,
+  Chip,
+  CircularProgress,
+} from "@mui/material";
 import React from "react";
 import AddProject from "../components/AddProject";
 
@@ -15,7 +23,7 @@ const HomePage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const theme = useTheme();
-  const { projects } = useSelector((state) => state.projectReducer);
+  const { projects, isLoading } = useSelector((state) => state.projectReducer);
 
   useEffect(() => {
     dispatch(getProjects());
@@ -49,6 +57,19 @@ const HomePage = () => {
         <Typography variant="h5" fontWeight={"bold"}>
           Your Projects
         </Typography>
+
+        {isLoading && (
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <CircularProgress />
+          </div>
+        )}
+
         <Grid
           container
           spacing={2}

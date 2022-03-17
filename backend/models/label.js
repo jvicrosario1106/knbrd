@@ -3,11 +3,14 @@ const Schema = mongoose.Schema;
 
 const labelSchema = Schema(
   {
-    user: {
+    project: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+      ref: "Project",
     },
     name: {
+      type: String,
+    },
+    color: {
       type: String,
     },
   },
