@@ -64,4 +64,24 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
+router.patch("/columnOrder", async (req, res) => {
+  const { project, columns } = req.body;
+
+  try {
+    const response = await Project.updateOne(
+      { _id: project },
+      { $set: { columns: columns } }
+    );
+    if (response) {
+      res.status(200).json({
+        message: "Successfully Updated",
+      });
+    }
+  } catch (err) {
+    res.status(400).json({
+      message: "Unable to Update",
+    });
+  }
+});
+
 module.exports = router;

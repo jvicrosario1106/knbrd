@@ -62,6 +62,23 @@ export const addColumn = createAsyncThunk(
   }
 );
 
+export const columnOrder = createAsyncThunk(
+  "column/columnOrder",
+  async (data, thunkAPI) => {
+    const { projectReducer } = thunkAPI.getState();
+
+    try {
+      await API_URL.patch("/api/columns/columnOrder", {
+        project: data.project,
+        columns: projectReducer.projects[0].columns,
+      });
+    } catch (err) {
+      const { message } = err.response.data;
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
 const initialState = {
   isCreated: null,
   isUpdated: null,
@@ -169,11 +186,10 @@ const projectReducer = createSlice({
         state.isUpdated = false;
         state.isDeleted = false;
         state.isSuccess = false;
-        // state.isLoading = true;
         state.isFailed = false;
       })
       .addCase(addColumn.fulfilled, (state, action) => {
-        state.isCreated = false;
+        state.isCreated = true;
         state.isUpdated = false;
         state.isDeleted = false;
         state.isSuccess = true;
@@ -183,6 +199,30 @@ const projectReducer = createSlice({
           state.projects[0].columns.unshift(action.payload);
       })
       .addCase(addColumn.rejected, (state, action) => {
+        state.isCreated = false;
+        state.isUpdated = false;
+        state.isDeleted = false;
+        state.isSuccess = false;
+        state.isLoading = false;
+        state.isFailed = true;
+      })
+
+      .addCase(columnOrder.pending, (state, action) => {
+        state.isCreated = false;
+        state.isUpdated = false;
+        state.isDeleted = false;
+        state.isSuccess = false;
+        state.isFailed = false;
+      })
+      .addCase(columnOrder.fulfilled, (state, action) => {
+        state.isCreated = false;
+        state.isUpdated = false;
+        state.isDeleted = false;
+        state.isSuccess = true;
+        state.isLoading = false;
+        state.isFailed = false;
+      })
+      .addCase(columnOrder.rejected, (state, action) => {
         state.isCreated = false;
         state.isUpdated = false;
         state.isDeleted = false;

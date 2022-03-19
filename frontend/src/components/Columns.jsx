@@ -1,10 +1,27 @@
-import { Box, Button, IconButton, Typography } from "@mui/material";
-import React from "react";
+import {
+  Box,
+  Button,
+  IconButton,
+  Typography,
+  Menu,
+  MenuItem,
+} from "@mui/material";
+import React, { useState } from "react";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { blue } from "@mui/material/colors";
-import { FiTrash2, FiPlus } from "react-icons/fi";
+import { FiMoreVertical, FiPlus } from "react-icons/fi";
+import AddTask from "./AddTask";
 
-const Columns = ({ column, index }) => {
+const Columns = ({ column, index, labels, assignees }) => {
+  // Settings Menu
+  const [anchorEl, setAnchorEl] = useState(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
   return (
     <div>
       <Draggable key={column._id} draggableId={`${column._id}`} index={index}>
@@ -31,16 +48,56 @@ const Columns = ({ column, index }) => {
               }}
             >
               <Typography>{column.name}</Typography>
-              <IconButton
-                size="small"
-                onClick={() => window.confirm("Are you sure?")}
-              >
-                <FiTrash2 />
+              <IconButton size="small" onClick={handleClick}>
+                <FiMoreVertical />
               </IconButton>
+
+              {/* Menu Options Settings */}
+              <Menu
+                id="demo-positioned-menu"
+                aria-labelledby="demo-positioned-button"
+                anchorEl={anchorEl}
+                open={open}
+                onClose={handleClose}
+                anchorOrigin={{
+                  vertical: "top",
+                  horizontal: "left",
+                }}
+                transformOrigin={{
+                  vertical: "top",
+                  horizontal: "left",
+                }}
+              >
+                <MenuItem onClick={handleClose}>
+                  <Button
+                    variant="outlined"
+                    color="primary"
+                    size="small"
+                    fullWidth
+                  >
+                    Rename Column
+                  </Button>
+                </MenuItem>
+                <MenuItem onClick={handleClose}>
+                  <Button
+                    variant="outlined"
+                    color="error"
+                    size="small"
+                    fullWidth
+                  >
+                    Delete Column
+                  </Button>
+                </MenuItem>
+              </Menu>
             </Box>
 
-            <Box sx={{ position: "absolute", bottom: 0 }}>
-              <Button startIcon={<FiPlus />}>Add New Task</Button>
+            <Box
+              sx={{
+                position: "absolute",
+                bottom: 0,
+              }}
+            >
+              <AddTask labels={labels} assignees={assignees} />
             </Box>
           </Box>
         )}

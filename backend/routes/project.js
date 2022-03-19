@@ -50,18 +50,34 @@ router.get("/:id", protectedRoutes, async (req, res) => {
 
   try {
     const getProject = await Project.findById(id);
+
     const projects = await Project.aggregate([
       {
         $match: { _id: getProject._id },
       },
+
       {
         $lookup: {
           from: "columns",
-          as: "columns",
           localField: "columns",
           foreignField: "_id",
+          let: { columns: "$columns" },
+
+          pipeline: [
+            { $match: { $expr: { $in: ["$_id", "$$columns"] } } },
+            {
+              $addFields: {
+                sort: {
+                  $indexOfArray: ["$$columns", "$_id"],
+                },
+              },
+            },
+            { $sort: { sort: 1 } },
+          ],
+          as: "columns",
         },
       },
+
       {
         $lookup: {
           from: "users",
@@ -72,9 +88,6 @@ router.get("/:id", protectedRoutes, async (req, res) => {
       },
       {
         $project: { user: { password: 0 } },
-      },
-      {
-        $sort: { createdAt: -1 },
       },
     ]);
 
@@ -89,7 +102,6 @@ router.get("/:id", protectedRoutes, async (req, res) => {
 router.post("/", protectedRoutes, async (req, res) => {
   const user = req.user._id;
   const { name } = req.body;
-  console.log(req.body);
 
   try {
     const project = await Project.create({ user: user, name });
