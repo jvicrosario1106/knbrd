@@ -87,7 +87,12 @@ const AddTask = ({ labels, assignees, columnId, projectId }) => {
 
   return (
     <div>
-      <Button startIcon={<FiPlus />} onClick={handleOpen}>
+      <Button
+        fullWidth
+        variant="outlined"
+        startIcon={<FiPlus />}
+        onClick={handleOpen}
+      >
         Insert New Task
       </Button>
       <Modal

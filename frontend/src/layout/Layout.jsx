@@ -11,9 +11,10 @@ import {
   Box,
   Typography,
 } from "@mui/material";
-import { FiTrello } from "react-icons/fi";
+import { FcTodoList } from "react-icons/fc";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useTheme } from "@mui/system";
+import { deepPurple } from "@mui/material/colors";
 
 const Layout = ({ children }) => {
   const drawerWidth = 250;
@@ -25,9 +26,9 @@ const Layout = ({ children }) => {
 
   const paths = [
     {
-      name: <Typography fontWeight={"bold"}>Projects</Typography>,
+      name: <Typography fontWeight={"bold"}>My Projects</Typography>,
       path: "/",
-      icon: <FiTrello size={30} />,
+      icon: <FcTodoList size={30} />,
     },
   ];
 
@@ -78,9 +79,9 @@ const Layout = ({ children }) => {
                     sx={
                       location.pathname === path.path
                         ? {
-                            background: palette.primary.light,
+                            background: deepPurple[50],
                             color: palette.primary.main,
-                            borderRadius: 10,
+                            borderRadius: 3,
                           }
                         : null
                     }

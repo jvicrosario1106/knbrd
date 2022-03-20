@@ -6,11 +6,11 @@ const Column = require("../models/column");
 router.post("/", async (req, res) => {
   try {
     const task = await Task.create(req.body);
-    console.log(task);
+
     if (task) {
       const column = await Column.updateOne(
         { _id: req.body.column },
-        { $push: { task: { $each: [task.column], $position: 0 } } }
+        { $push: { task: { $each: [task._id], $position: 0 } } }
       );
       if (column) {
         res.status(200).json(task);

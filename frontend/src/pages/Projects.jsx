@@ -7,6 +7,7 @@ import {
   reorder,
   columnOrder,
   updateProjectName,
+  reorderTask,
 } from "../slice/projectSlice";
 import { getLabel, createLabel, deleteLabel } from "../slice/labelSlice";
 import { useDispatch, useSelector } from "react-redux";
@@ -44,7 +45,9 @@ const Projects = () => {
     setAnchorEl(null);
   };
 
-  const { projects, isLoading } = useSelector((state) => state.projectReducer);
+  const { projects, isLoading, get } = useSelector(
+    (state) => state.projectReducer
+  );
   const { labels, isLoading: isLoadingLabel } = useSelector(
     (state) => state.labelReducer
   );
@@ -111,9 +114,22 @@ const Projects = () => {
   const handleColumnDrag = (result) => {
     const { destination, draggableId, source } = result;
     if (destination === null) return;
-    console.log(result);
-    dispatch(reorder(result));
-    dispatch(columnOrder({ project: id }));
+
+    if (
+      destination.index === source.index &&
+      destination.droppableId === source.droppableId
+    ) {
+      return;
+    }
+
+    if (result.type === "COLUMN") {
+      dispatch(reorder(result));
+      dispatch(columnOrder({ project: id }));
+    }
+
+    if (result.type === "TASK") {
+      dispatch(reorderTask(result));
+    }
   };
 
   if (isLoading) {

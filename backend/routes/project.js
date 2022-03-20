@@ -80,9 +80,29 @@ router.get("/:id", protectedRoutes, async (req, res) => {
             {
               $lookup: {
                 from: "tasks",
-                as: "task",
-                localField: "columns.task",
+                localField: "task",
                 foreignField: "_id",
+                let: { task: "$task" },
+                as: "task",
+                pipeline: [
+                  { $match: { $expr: { $in: ["$_id", "$$task"] } } },
+                  {
+                    $addFields: {
+                      sort: {
+                        $indexOfArray: ["$$task", "$_id"],
+                      },
+                    },
+                  },
+                  { $sort: { sort: 1 } },
+                  {
+                    $lookup: {
+                      from: "labels",
+                      localField: "label",
+                      foreignField: "_id",
+                      as: "label",
+                    },
+                  },
+                ],
               },
             },
           ],
@@ -99,6 +119,7 @@ router.get("/:id", protectedRoutes, async (req, res) => {
           foreignField: "_id",
         },
       },
+
       {
         $project: { user: { password: 0 } },
       },

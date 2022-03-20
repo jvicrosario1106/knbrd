@@ -5,6 +5,7 @@ import {
   Typography,
   Menu,
   MenuItem,
+  Paper,
 } from "@mui/material";
 import React, { useState } from "react";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
@@ -16,12 +17,14 @@ import { useDispatch } from "react-redux";
 
 const Columns = ({ column, index, labels, assignees, projectId }) => {
   const dispatch = useDispatch();
+
   // Settings Menu
   const [anchorEl, setAnchorEl] = useState(false);
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
+
   const handleClose = () => {
     setAnchorEl(null);
   };
@@ -57,14 +60,14 @@ const Columns = ({ column, index, labels, assignees, projectId }) => {
         {(provided, snapshot) => (
           <Box
             sx={{
+              display: "flex",
+              flexDirection: "column",
+              // boxShadow: "-1px 2px 10px -2px rgba(0,0,0,0.43);",
               height: "53vh",
-              overflowY: "scroll",
-              boxShadow: "-1px 2px 10px -2px rgba(0,0,0,0.43);",
               mr: 3,
               p: 2,
-              width: "15vw",
+              width: "19vw",
               background: snapshot.isDragging && blue[50],
-              position: "relative",
             }}
             ref={provided.innerRef}
             {...provided.dragHandleProps}
@@ -81,11 +84,51 @@ const Columns = ({ column, index, labels, assignees, projectId }) => {
                 <FiMoreVertical />
               </IconButton>
             </Box>
+            <Box sx={{ flex: 1 }}>
+              <Droppable droppableId={`${column._id}`} type="TASK">
+                {(provided, snapshot) => (
+                  <div
+                    style={{ overflowY: "scroll", p: 1, height: "45vh" }}
+                    ref={provided.innerRef}
+                    {...provided.droppableProps}
+                  >
+                    {column.task.length > 0 &&
+                      column.task.map((task, index) => (
+                        <Draggable
+                          key={task._id}
+                          draggableId={`${task._id}`}
+                          index={index}
+                        >
+                          {(provided, snapshot) => (
+                            <Paper
+                              ref={provided.innerRef}
+                              {...provided.dragHandleProps}
+                              {...provided.draggableProps}
+                              sx={{
+                                p: 1,
+                                m: 1,
+                                background: snapshot.isDragging && blue[50],
+                                boxShadow:
+                                  "-1px 2px 10px -2px rgba(0,0,0,0.43);",
+                              }}
+                            >
+                              <Typography variant="body2" fontWeight={"bold"}>
+                                {task.name}
+                              </Typography>
+                            </Paper>
+                          )}
+                        </Draggable>
+                      ))}
+                    {provided.placeholder}
+                  </div>
+                )}
+              </Droppable>
+            </Box>
 
             <Box
               sx={{
-                position: "absolute",
-                bottom: 0,
+                width: "100%",
+                mt: 1,
               }}
             >
               <AddTask

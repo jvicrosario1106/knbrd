@@ -40,7 +40,7 @@ export const getProject = createAsyncThunk(
       const response = await API_URL.get(`/api/projects/${project}`, {
         withCredentials: true,
       });
-      console.log(response.data);
+
       return response.data;
     } catch (err) {
       const { message } = err.response.data;
@@ -145,6 +145,21 @@ const projectReducer = createSlice({
       const [removedItem] = item.splice(source.index, 1);
       item.splice(destination.index, 0, removedItem);
       state.projects[0].columns = item;
+    },
+    reorderTask: (state, action) => {
+      const { destination, draggableId, source } = action.payload;
+      const getColumn = state.projects[0].columns.filter(
+        (column) => column._id === destination.droppableId
+      );
+
+      const item = Array.from(getColumn[0].task);
+      const [removedItem] = item.splice(source.index, 1);
+      item.splice(destination.index, 0, removedItem);
+      state.projects[0].columns = state.projects[0].columns.map((column) =>
+        column._id === destination.droppableId
+          ? { ...column, task: item }
+          : column
+      );
     },
   },
 
@@ -340,6 +355,16 @@ const projectReducer = createSlice({
         state.isSuccess = true;
         state.isLoading = false;
         state.isFailed = false;
+        const getColumn = state.projects[0].columns.filter(
+          (column) => column._id === action.payload.column
+        );
+        const getTasks = getColumn[0].task.unshift(action.payload);
+        state.get = getColumn;
+        state.projects[0].columns = state.projects[0].columns.map((column) =>
+          column._id === action.payload.column
+            ? { ...column, getColumn }
+            : column
+        );
       })
       .addCase(createTask.rejected, (state, action) => {
         state.isCreated = false;
@@ -352,6 +377,6 @@ const projectReducer = createSlice({
   },
 });
 
-export const { reorder } = projectReducer.actions;
+export const { reorder, reorderTask } = projectReducer.actions;
 
 export default projectReducer.reducer;
