@@ -89,7 +89,7 @@ const AddTask = ({ labels, assignees, columnId, projectId }) => {
     <div>
       <Button
         fullWidth
-        variant="outlined"
+        variant="contained"
         startIcon={<FiPlus />}
         onClick={handleOpen}
       >

@@ -64,7 +64,7 @@ const Columns = ({ column, index, labels, assignees, projectId }) => {
               flexDirection: "column",
               // boxShadow: "-1px 2px 10px -2px rgba(0,0,0,0.43);",
               height: "53vh",
-              mr: 3,
+              mr: 1,
               p: 2,
               width: "19vw",
               background: snapshot.isDragging && blue[50],
@@ -79,13 +79,23 @@ const Columns = ({ column, index, labels, assignees, projectId }) => {
                 justifyContent: "space-between",
               }}
             >
-              <Typography>{column.name}</Typography>
+              <Typography>
+                {column.name}{" "}
+                <Typography sx={{ opacity: 0.3 }} component={"span"}>
+                  {" "}
+                  {column.task.length}
+                </Typography>
+              </Typography>
               <IconButton size="small" onClick={handleClick}>
                 <FiMoreVertical />
               </IconButton>
             </Box>
             <Box sx={{ flex: 1 }}>
-              <Droppable droppableId={`${column._id}`} type="TASK">
+              <Droppable
+                droppableId={`${column._id}`}
+                key={column._id}
+                type="TASK"
+              >
                 {(provided, snapshot) => (
                   <div
                     style={{ overflowY: "scroll", p: 1, height: "45vh" }}
@@ -105,6 +115,8 @@ const Columns = ({ column, index, labels, assignees, projectId }) => {
                               {...provided.dragHandleProps}
                               {...provided.draggableProps}
                               sx={{
+                                borderLeft: `3px solid  ${blue[500]}`,
+                                height: "20vh",
                                 p: 1,
                                 m: 1,
                                 background: snapshot.isDragging && blue[50],

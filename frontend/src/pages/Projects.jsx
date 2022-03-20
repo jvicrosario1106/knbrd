@@ -8,6 +8,7 @@ import {
   columnOrder,
   updateProjectName,
   reorderTask,
+  taskOrder,
 } from "../slice/projectSlice";
 import { getLabel, createLabel, deleteLabel } from "../slice/labelSlice";
 import { useDispatch, useSelector } from "react-redux";
@@ -128,7 +129,12 @@ const Projects = () => {
     }
 
     if (result.type === "TASK") {
-      dispatch(reorderTask(result));
+      if (destination.droppableId === source.droppableId) {
+        dispatch(reorderTask(result));
+        dispatch(taskOrder({ column: destination.droppableId }));
+      } else {
+        console.log("Not Equal");
+      }
     }
   };
 

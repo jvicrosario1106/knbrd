@@ -23,4 +23,24 @@ router.post("/", async (req, res) => {
   }
 });
 
+router.patch("/taskOrder", async (req, res) => {
+  const { column, task } = req.body;
+
+  try {
+    const response = await Column.updateOne(
+      { _id: column },
+      { $set: { task } }
+    );
+    if (response) {
+      res.status(200).json({
+        message: "Successuflly Ordered",
+      });
+    }
+  } catch (err) {
+    res.status(400).json({
+      message: "Unable to update",
+    });
+  }
+});
+
 module.exports = router;
