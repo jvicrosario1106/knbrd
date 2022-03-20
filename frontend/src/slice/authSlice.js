@@ -8,6 +8,7 @@ export const loginUser = createAsyncThunk(
       const response = await API_URL.post("/api/auth/login", credential, {
         withCredentials: true,
       });
+
       return response.data;
     } catch (err) {
       const { message } = err.response.data;

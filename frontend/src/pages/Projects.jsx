@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import {
   addColumn,
   getProject,
+  deleteProject,
   reorder,
   columnOrder,
 } from "../slice/projectSlice";
@@ -23,11 +24,13 @@ import Label from "../components/Label";
 import AddColumn from "../components/AddColumn";
 import Columns from "../components/Columns";
 import { FiEdit3, FiSettings, FiTrash2 } from "react-icons/fi";
+import { useNavigate } from "react-router-dom";
 import InviteUser from "../components/InviteUser";
 
 const Projects = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   // Settings Menu
   const [anchorEl, setAnchorEl] = useState(null);
@@ -48,6 +51,18 @@ const Projects = () => {
     dispatch(getProject(id));
     dispatch(getLabel(id));
   }, [dispatch, id]);
+
+  //Delete project
+
+  const projectDelete = () => {
+    const confirm = window.confirm(
+      "Deleting this project can delete all the data inside it. Are you sure you want to continue?"
+    );
+    if (confirm) {
+      dispatch(deleteProject(id));
+      navigate("/");
+    }
+  };
 
   // Label Component Variable
 
@@ -143,7 +158,7 @@ const Projects = () => {
                   Rename Project
                 </Button>
               </MenuItem>
-              <MenuItem onClick={handleClose}>
+              <MenuItem onClick={projectDelete}>
                 <Button
                   endIcon={<FiTrash2 />}
                   variant="outlined"
@@ -151,7 +166,7 @@ const Projects = () => {
                   size="small"
                   fullWidth
                 >
-                  Delete Project
+                  Remove Project
                 </Button>
               </MenuItem>
             </Menu>

@@ -49,6 +49,21 @@ export const getProject = createAsyncThunk(
   }
 );
 
+export const deleteProject = createAsyncThunk(
+  "projects/deleteProject",
+  async (projectId, thunkAPI) => {
+    try {
+      await API_URL.delete(`/api/projects/${projectId}`, {
+        withCredentials: true,
+      });
+      return projectId;
+    } catch (err) {
+      const { message } = err.response.data;
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
 export const addColumn = createAsyncThunk(
   "project/addColumn",
   async (column, thunkAPI) => {
@@ -72,6 +87,19 @@ export const columnOrder = createAsyncThunk(
         project: data.project,
         columns: projectReducer.projects[0].columns,
       });
+    } catch (err) {
+      const { message } = err.response.data;
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
+export const deleteColumn = createAsyncThunk(
+  "projects/deleteColumn",
+  async (columnId, thunkAPI) => {
+    try {
+      await API_URL.delete(`/api/columns/${columnId}`);
+      return columnId;
     } catch (err) {
       const { message } = err.response.data;
       return thunkAPI.rejectWithValue(message);
@@ -181,6 +209,31 @@ const projectReducer = createSlice({
         state.isFailed = true;
       })
 
+      .addCase(deleteProject.pending, (state, action) => {
+        state.isCreated = false;
+        state.isUpdated = false;
+        state.isDeleted = false;
+        state.isSuccess = false;
+        state.isLoading = true;
+        state.isFailed = false;
+      })
+      .addCase(deleteProject.fulfilled, (state, action) => {
+        state.isCreated = false;
+        state.isUpdated = false;
+        state.isDeleted = true;
+        state.isSuccess = true;
+        state.isLoading = false;
+        state.isFailed = false;
+      })
+      .addCase(deleteProject.rejected, (state, action) => {
+        state.isCreated = false;
+        state.isUpdated = false;
+        state.isDeleted = false;
+        state.isSuccess = false;
+        state.isLoading = false;
+        state.isFailed = true;
+      })
+
       .addCase(addColumn.pending, (state, action) => {
         state.isCreated = false;
         state.isUpdated = false;
@@ -223,6 +276,33 @@ const projectReducer = createSlice({
         state.isFailed = false;
       })
       .addCase(columnOrder.rejected, (state, action) => {
+        state.isCreated = false;
+        state.isUpdated = false;
+        state.isDeleted = false;
+        state.isSuccess = false;
+        state.isLoading = false;
+        state.isFailed = true;
+      })
+
+      .addCase(deleteColumn.pending, (state, action) => {
+        state.isCreated = false;
+        state.isUpdated = false;
+        state.isDeleted = false;
+        state.isSuccess = false;
+        state.isFailed = false;
+      })
+      .addCase(deleteColumn.fulfilled, (state, action) => {
+        state.isCreated = false;
+        state.isUpdated = false;
+        state.isDeleted = true;
+        state.isSuccess = true;
+        state.isLoading = false;
+        state.isFailed = false;
+        state.projects[0].columns = state.projects[0].columns.filter(
+          (column) => column._id !== action.payload
+        );
+      })
+      .addCase(deleteColumn.rejected, (state, action) => {
         state.isCreated = false;
         state.isUpdated = false;
         state.isDeleted = false;

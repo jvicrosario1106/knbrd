@@ -3,6 +3,9 @@ const { default: mongoose } = require("mongoose");
 const router = express.Router();
 const protectedRoutes = require("../middleware/protectroutes");
 const Project = require("../models/project");
+const Column = require("../models/column");
+const Tasks = require("../models/task");
+const Label = require("../models/label");
 
 router.get("/", protectedRoutes, async (req, res) => {
   const user = req.user._id;
@@ -125,7 +128,11 @@ router.delete("/:id", protectedRoutes, async (req, res) => {
   }
 
   try {
-    const project = await Project.findByIdAndRemove(id);
+    const [project, column] = await Promise.all([
+      Project.findByIdAndRemove(id),
+      Column.deleteMany({ project: id }),
+      Label.deleteMany({ project: id }),
+    ]);
     if (project) {
       res.status(200).json({
         message: "Successfully Deleted",
@@ -138,8 +145,8 @@ router.delete("/:id", protectedRoutes, async (req, res) => {
   }
 });
 
-router.patch("/", protectedRoutes, async (req, res) => {
-  const { _id, user, name, columns } = req.body;
+router.patch("/changename", protectedRoutes, async (req, res) => {
+  const { _id, name } = req.body;
 
   if (!mongoose.Types.ObjectId.isValid(_id)) {
     return res.status(400).json({
@@ -148,40 +155,10 @@ router.patch("/", protectedRoutes, async (req, res) => {
   }
 
   try {
-    const newData = { _id, user, name, columns };
-    const updated = await Project.findByIdAndUpdate(_id, newData, {
-      new: true,
+    await Project.updateOne({ _id }, { name });
+    res.status(200).json({
+      message: "Successfully Updated",
     });
-
-    if (updated) {
-      const getUpdated = await Project.aggregate([
-        {
-          $match: { _id: updated._id },
-        },
-
-        {
-          $lookup: {
-            from: "columns",
-            as: "columns",
-            localField: "columns",
-            foreignField: "_id",
-          },
-        },
-        {
-          $lookup: {
-            from: "users",
-            as: "user",
-            localField: "user",
-            foreignField: "_id",
-          },
-        },
-        {
-          $project: { user: { password: 0 } },
-        },
-      ]);
-
-      res.status(200).json(getUpdated);
-    }
   } catch (err) {
     res.status(400).json({
       message: "Unable to Update Data",

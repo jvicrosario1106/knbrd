@@ -11,10 +11,13 @@ import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { blue } from "@mui/material/colors";
 import { FiMoreVertical, FiPlus } from "react-icons/fi";
 import AddTask from "./AddTask";
+import { deleteColumn } from "../slice/projectSlice";
+import { useDispatch } from "react-redux";
 
 const Columns = ({ column, index, labels, assignees }) => {
+  const dispatch = useDispatch();
   // Settings Menu
-  const [anchorEl, setAnchorEl] = useState(null);
+  const [anchorEl, setAnchorEl] = useState(false);
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -22,8 +25,34 @@ const Columns = ({ column, index, labels, assignees }) => {
   const handleClose = () => {
     setAnchorEl(null);
   };
+
   return (
     <div>
+      {/* Menu Options Settings */}
+      <Menu
+        id="demo-positioned-menu"
+        aria-labelledby="demo-positioned-button"
+        anchorEl={anchorEl}
+        open={open}
+        onClose={handleClose}
+        anchorOrigin={{
+          vertical: "top",
+          horizontal: "left",
+        }}
+        transformOrigin={{
+          vertical: "top",
+          horizontal: "left",
+        }}
+      >
+        <MenuItem>
+          <Button variant="outlined" color="primary" size="small" fullWidth>
+            Rename Column
+          </Button>
+        </MenuItem>
+        <MenuItem>
+          <Typography>Delete</Typography>
+        </MenuItem>
+      </Menu>
       <Draggable key={column._id} draggableId={`${column._id}`} index={index}>
         {(provided, snapshot) => (
           <Box
@@ -51,44 +80,6 @@ const Columns = ({ column, index, labels, assignees }) => {
               <IconButton size="small" onClick={handleClick}>
                 <FiMoreVertical />
               </IconButton>
-
-              {/* Menu Options Settings */}
-              <Menu
-                id="demo-positioned-menu"
-                aria-labelledby="demo-positioned-button"
-                anchorEl={anchorEl}
-                open={open}
-                onClose={handleClose}
-                anchorOrigin={{
-                  vertical: "top",
-                  horizontal: "left",
-                }}
-                transformOrigin={{
-                  vertical: "top",
-                  horizontal: "left",
-                }}
-              >
-                <MenuItem onClick={handleClose}>
-                  <Button
-                    variant="outlined"
-                    color="primary"
-                    size="small"
-                    fullWidth
-                  >
-                    Rename Column
-                  </Button>
-                </MenuItem>
-                <MenuItem onClick={handleClose}>
-                  <Button
-                    variant="outlined"
-                    color="error"
-                    size="small"
-                    fullWidth
-                  >
-                    Delete Column
-                  </Button>
-                </MenuItem>
-              </Menu>
             </Box>
 
             <Box
