@@ -11,10 +11,10 @@ import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { blue } from "@mui/material/colors";
 import { FiMoreVertical, FiPlus } from "react-icons/fi";
 import AddTask from "./AddTask";
-import { deleteColumn } from "../slice/projectSlice";
+
 import { useDispatch } from "react-redux";
 
-const Columns = ({ column, index, labels, assignees }) => {
+const Columns = ({ column, index, labels, assignees, projectId }) => {
   const dispatch = useDispatch();
   // Settings Menu
   const [anchorEl, setAnchorEl] = useState(false);
@@ -88,7 +88,12 @@ const Columns = ({ column, index, labels, assignees }) => {
                 bottom: 0,
               }}
             >
-              <AddTask labels={labels} assignees={assignees} />
+              <AddTask
+                columnId={column._id}
+                labels={labels}
+                assignees={assignees}
+                projectId={projectId}
+              />
             </Box>
           </Box>
         )}

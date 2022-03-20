@@ -76,7 +76,17 @@ router.get("/:id", protectedRoutes, async (req, res) => {
               },
             },
             { $sort: { sort: 1 } },
+
+            {
+              $lookup: {
+                from: "tasks",
+                as: "task",
+                localField: "columns.task",
+                foreignField: "_id",
+              },
+            },
           ],
+
           as: "columns",
         },
       },
@@ -147,18 +157,14 @@ router.delete("/:id", protectedRoutes, async (req, res) => {
 
 router.patch("/changename", protectedRoutes, async (req, res) => {
   const { _id, name } = req.body;
-
   if (!mongoose.Types.ObjectId.isValid(_id)) {
     return res.status(400).json({
       message: "Invalid ID ",
     });
   }
-
   try {
-    await Project.updateOne({ _id }, { name });
-    res.status(200).json({
-      message: "Successfully Updated",
-    });
+    const response = await Project.updateOne({ _id }, { name });
+    res.status(200).json(response);
   } catch (err) {
     res.status(400).json({
       message: "Unable to Update Data",

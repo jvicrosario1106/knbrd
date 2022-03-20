@@ -6,6 +6,7 @@ import {
   deleteProject,
   reorder,
   columnOrder,
+  updateProjectName,
 } from "../slice/projectSlice";
 import { getLabel, createLabel, deleteLabel } from "../slice/labelSlice";
 import { useDispatch, useSelector } from "react-redux";
@@ -23,9 +24,10 @@ import { DragDropContext, Droppable } from "react-beautiful-dnd";
 import Label from "../components/Label";
 import AddColumn from "../components/AddColumn";
 import Columns from "../components/Columns";
-import { FiEdit3, FiSettings, FiTrash2 } from "react-icons/fi";
+import { FiSettings, FiTrash2 } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import InviteUser from "../components/InviteUser";
+import RenameProject from "../components/RenameProject";
 
 const Projects = () => {
   const { id } = useParams();
@@ -47,9 +49,13 @@ const Projects = () => {
     (state) => state.labelReducer
   );
 
+  //Project Name
+  const [projectName, setProjectName] = useState("");
+
   useEffect(() => {
     dispatch(getProject(id));
     dispatch(getLabel(id));
+    setProjectName(projects.length > 0 ? projects[0].name : "");
   }, [dispatch, id]);
 
   //Delete project
@@ -62,6 +68,12 @@ const Projects = () => {
       dispatch(deleteProject(id));
       navigate("/");
     }
+  };
+
+  //Update Project Name
+  const updateProjectNames = (e) => {
+    e.preventDefault();
+    dispatch(updateProjectName({ _id: id, name: projectName }));
   };
 
   // Label Component Variable
@@ -99,7 +111,7 @@ const Projects = () => {
   const handleColumnDrag = (result) => {
     const { destination, draggableId, source } = result;
     if (destination === null) return;
-
+    console.log(result);
     dispatch(reorder(result));
     dispatch(columnOrder({ project: id }));
   };
@@ -147,16 +159,12 @@ const Projects = () => {
                 horizontal: "left",
               }}
             >
-              <MenuItem onClick={handleClose}>
-                <Button
-                  endIcon={<FiEdit3 />}
-                  variant="outlined"
-                  color="primary"
-                  size="small"
-                  fullWidth
-                >
-                  Rename Project
-                </Button>
+              <MenuItem>
+                <RenameProject
+                  projectName={projectName}
+                  setProjectName={setProjectName}
+                  updateProjectNames={updateProjectNames}
+                />
               </MenuItem>
               <MenuItem onClick={projectDelete}>
                 <Button
@@ -242,6 +250,7 @@ const Projects = () => {
                               index={index}
                               labels={labels}
                               assignees={projects[0].user}
+                              projectId={projects[0]._id}
                             />
                           </Box>
                         ))

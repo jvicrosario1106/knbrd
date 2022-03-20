@@ -88,7 +88,7 @@ const HomePage = () => {
               >
                 <Box
                   sx={{
-                    border: "1px solid rgba(0,0,0,0.3)",
+                    border: "1px solid rgba(0,0,0,0.1)",
                     padding: 6,
                     textAlign: "center",
                     borderRadius: 3,

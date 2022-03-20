@@ -3,9 +3,13 @@ const Schema = mongoose.Schema;
 
 const taskSchema = Schema(
   {
-    user: {
+    project: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+      ref: "Project",
+    },
+    column: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Column",
     },
     name: {
       type: String,
@@ -14,6 +18,10 @@ const taskSchema = Schema(
       type: String,
     },
     label: [{ type: mongoose.Schema.Types.ObjectId, ref: "Label" }],
+    assignees: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+    priority: {
+      type: String,
+    },
   },
   { timestamps: true }
 );

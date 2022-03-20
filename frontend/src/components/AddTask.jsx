@@ -12,8 +12,10 @@ import {
   styleAssignees,
 } from "../utilities/selectData";
 import Select from "react-select";
+import { createTask } from "../slice/projectSlice";
+import { useDispatch } from "react-redux";
 
-const AddTask = ({ labels, assignees }) => {
+const AddTask = ({ labels, assignees, columnId, projectId }) => {
   const style = {
     position: "absolute",
     top: "50%",
@@ -25,6 +27,7 @@ const AddTask = ({ labels, assignees }) => {
     boxShadow: 24,
     p: 4,
   };
+  const dispatch = useDispatch();
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -33,9 +36,30 @@ const AddTask = ({ labels, assignees }) => {
   const [label, setLabels] = useState([]);
   const [Userassignees, setUserAssignees] = useState([]);
 
+  const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
   const [assignLabel, setAssignLabel] = useState([]);
   const [assignUser, setAssignUser] = useState([]);
   const [assignPriority, setAssingPriority] = useState([]);
+
+  const submitTask = (e) => {
+    e.preventDefault();
+    const data = {
+      project: projectId,
+      column: columnId,
+      name,
+      description,
+      label: assignLabel.map((label) => {
+        return label.value;
+      }),
+      assignees: assignUser.map((assign) => {
+        return assign.value;
+      }),
+      priority: assignPriority.value,
+    };
+
+    dispatch(createTask(data));
+  };
 
   useEffect(() => {
     const retrieveLabels = () => {
@@ -76,16 +100,16 @@ const AddTask = ({ labels, assignees }) => {
           <Typography id="modal-modal-title" variant="h6" component="h2">
             New Task
           </Typography>
-          <form>
+          <form onSubmit={(e) => submitTask(e)}>
             <TextField
               type="text"
               size="small"
               fullWidth
               label="Task Name"
               sx={{ mt: 2 }}
-              //   value={name}
+              value={name}
               name="name"
-              //   onChange={(e) => setName(e.target.value)}
+              onChange={(e) => setName(e.target.value)}
             />
             <TextField
               margin="normal"
@@ -93,6 +117,9 @@ const AddTask = ({ labels, assignees }) => {
               multiline
               rows={6}
               label="Descriptions"
+              value={description}
+              name="description"
+              onChange={(e) => setDescription(e.target.value)}
             />
 
             <Select

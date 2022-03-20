@@ -40,7 +40,7 @@ export const getProject = createAsyncThunk(
       const response = await API_URL.get(`/api/projects/${project}`, {
         withCredentials: true,
       });
-
+      console.log(response.data);
       return response.data;
     } catch (err) {
       const { message } = err.response.data;
@@ -57,6 +57,22 @@ export const deleteProject = createAsyncThunk(
         withCredentials: true,
       });
       return projectId;
+    } catch (err) {
+      const { message } = err.response.data;
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
+export const updateProjectName = createAsyncThunk(
+  "project/updateProjectName",
+  async (data, thunkAPI) => {
+    try {
+      await API_URL.patch("/api/projects/changename", data, {
+        withCredentials: true,
+      });
+      console.log(data);
+      return data;
     } catch (err) {
       const { message } = err.response.data;
       return thunkAPI.rejectWithValue(message);
@@ -94,12 +110,14 @@ export const columnOrder = createAsyncThunk(
   }
 );
 
-export const deleteColumn = createAsyncThunk(
-  "projects/deleteColumn",
-  async (columnId, thunkAPI) => {
+// Task Thunk
+
+export const createTask = createAsyncThunk(
+  "project/createTask",
+  async (task, thunkAPI) => {
     try {
-      await API_URL.delete(`/api/columns/${columnId}`);
-      return columnId;
+      const response = await API_URL.post("/api/tasks", task);
+      return response.data;
     } catch (err) {
       const { message } = err.response.data;
       return thunkAPI.rejectWithValue(message);
@@ -233,7 +251,32 @@ const projectReducer = createSlice({
         state.isLoading = false;
         state.isFailed = true;
       })
-
+      .addCase(updateProjectName.pending, (state, action) => {
+        state.isCreated = false;
+        state.isUpdated = false;
+        state.isDeleted = false;
+        state.isSuccess = false;
+        state.isLoading = false;
+        state.isFailed = false;
+      })
+      .addCase(updateProjectName.fulfilled, (state, action) => {
+        state.isCreated = false;
+        state.isUpdated = true;
+        state.isDeleted = false;
+        state.isSuccess = true;
+        state.isLoading = false;
+        state.isFailed = false;
+        state.projects[0].name = action.payload.name;
+      })
+      .addCase(updateProjectName.rejected, (state, action) => {
+        state.isCreated = false;
+        state.isUpdated = false;
+        state.isDeleted = false;
+        state.isSuccess = false;
+        state.isLoading = false;
+        state.isFailed = true;
+      })
+      //Column
       .addCase(addColumn.pending, (state, action) => {
         state.isCreated = false;
         state.isUpdated = false;
@@ -259,7 +302,6 @@ const projectReducer = createSlice({
         state.isLoading = false;
         state.isFailed = true;
       })
-
       .addCase(columnOrder.pending, (state, action) => {
         state.isCreated = false;
         state.isUpdated = false;
@@ -283,26 +325,23 @@ const projectReducer = createSlice({
         state.isLoading = false;
         state.isFailed = true;
       })
-
-      .addCase(deleteColumn.pending, (state, action) => {
+      //Task
+      .addCase(createTask.pending, (state, action) => {
         state.isCreated = false;
         state.isUpdated = false;
         state.isDeleted = false;
         state.isSuccess = false;
         state.isFailed = false;
       })
-      .addCase(deleteColumn.fulfilled, (state, action) => {
-        state.isCreated = false;
+      .addCase(createTask.fulfilled, (state, action) => {
+        state.isCreated = true;
         state.isUpdated = false;
-        state.isDeleted = true;
+        state.isDeleted = false;
         state.isSuccess = true;
         state.isLoading = false;
         state.isFailed = false;
-        state.projects[0].columns = state.projects[0].columns.filter(
-          (column) => column._id !== action.payload
-        );
       })
-      .addCase(deleteColumn.rejected, (state, action) => {
+      .addCase(createTask.rejected, (state, action) => {
         state.isCreated = false;
         state.isUpdated = false;
         state.isDeleted = false;
