@@ -3,6 +3,7 @@ const { default: mongoose } = require("mongoose");
 const router = express.Router();
 const Column = require("../models/column");
 const Project = require("../models/project");
+const Task = require("../models/task");
 
 router.post("/", async (req, res) => {
   const { project, name } = req.body;
@@ -41,17 +42,22 @@ router.delete("/:id", async (req, res) => {
 
   try {
     const getColumn = await Column.findById(id);
-    const deleteColumn = await Column.findByIdAndRemove(id);
-    if (deleteColumn) {
-      const deleteColumnInProject = await Project.updateOne(
-        { _id: getColumn.project },
-        { $pull: { columns: getColumn._id } }
-      );
-      if (deleteColumnInProject) {
-        res.status(200).json({
-          message: "Successfully Deleted",
-        });
-      }
+    const [deleteColumn, deleteTask, deleteColumnInProject] = await Promise.all(
+      [
+        Column.findByIdAndRemove(id),
+        Task.deleteMany({ project: getColumn.project }),
+
+        Project.updateOne(
+          { _id: getColumn.project },
+          { $pull: { columns: getColumn._id } }
+        ),
+      ]
+    );
+
+    if (deleteColumnInProject) {
+      res.status(200).json({
+        message: "Successfully Deleted",
+      });
     } else {
       res.status(400).json({
         message: "Unable to deleted column",

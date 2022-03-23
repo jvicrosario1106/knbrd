@@ -248,8 +248,6 @@ const Projects = () => {
                   {(provided, snapshot) => (
                     <Box
                       sx={{
-                        background:
-                          snapshot.isDraggingOver && "rgba(0,0,0,0.01)",
                         display: "flex",
                         width: "50vw",
                       }}

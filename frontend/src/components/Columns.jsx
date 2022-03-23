@@ -1,6 +1,5 @@
 import {
   Box,
-  Button,
   IconButton,
   Typography,
   Menu,
@@ -9,16 +8,13 @@ import {
   Grid,
 } from "@mui/material";
 import React, { useState } from "react";
-import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+import { Droppable, Draggable } from "react-beautiful-dnd";
 import { blue } from "@mui/material/colors";
-import { FiMoreVertical, FiPlus } from "react-icons/fi";
+import { FiMoreVertical, FiTrash } from "react-icons/fi";
 import AddTask from "./AddTask";
-
-import { useDispatch } from "react-redux";
+import Task from "./Task";
 
 const Columns = ({ column, index, labels, assignees, projectId }) => {
-  const dispatch = useDispatch();
-
   // Settings Menu
   const [anchorEl, setAnchorEl] = useState(false);
   const open = Boolean(anchorEl);
@@ -32,41 +28,10 @@ const Columns = ({ column, index, labels, assignees, projectId }) => {
 
   return (
     <div>
-      {/* Menu Options Settings */}
-      <Menu
-        id="demo-positioned-menu"
-        aria-labelledby="demo-positioned-button"
-        anchorEl={anchorEl}
-        open={open}
-        onClose={handleClose}
-        anchorOrigin={{
-          vertical: "top",
-          horizontal: "left",
-        }}
-        transformOrigin={{
-          vertical: "top",
-          horizontal: "left",
-        }}
-      >
-        <MenuItem>
-          <Button variant="outlined" color="primary" size="small" fullWidth>
-            Rename Column
-          </Button>
-        </MenuItem>
-        <MenuItem>
-          <Typography>Delete</Typography>
-        </MenuItem>
-      </Menu>
       <Draggable key={column._id} draggableId={`${column._id}`} index={index}>
         {(provided, snapshot) => (
-          <Grid
-            item
-            lg={12}
-            md={12}
+          <Box
             sx={{
-              // display: "flex",
-              // flexDirection: "column",
-              // boxShadow: "-1px 2px 10px -2px rgba(0,0,0,0.43);",
               height: "60vh",
               mr: 1,
               p: 2,
@@ -77,6 +42,16 @@ const Columns = ({ column, index, labels, assignees, projectId }) => {
             {...provided.dragHandleProps}
             {...provided.draggableProps}
           >
+            {/* Menu Options Settings */}
+            {/* <Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
+              <MenuItem>
+                <Typography>Rename Column </Typography>
+              </MenuItem>
+              <MenuItem onClick={removeColumn(column._id)}>
+                <Typography>Delete Column</Typography>
+              </MenuItem>
+            </Menu> */}
+
             <Box
               sx={{
                 display: "flex",
@@ -90,7 +65,7 @@ const Columns = ({ column, index, labels, assignees, projectId }) => {
                   {column.task.length}
                 </Typography>
               </Typography>
-              <IconButton size="small" onClick={handleClick}>
+              <IconButton size="small">
                 <FiMoreVertical />
               </IconButton>
             </Box>
@@ -128,9 +103,7 @@ const Columns = ({ column, index, labels, assignees, projectId }) => {
                                   "-1px 2px 10px -2px rgba(0,0,0,0.43);",
                               }}
                             >
-                              <Typography variant="body2" fontWeight={"bold"}>
-                                {task.name}
-                              </Typography>
+                              <Task task={task} columnId={column._id} />
                             </Paper>
                           )}
                         </Draggable>
@@ -154,7 +127,7 @@ const Columns = ({ column, index, labels, assignees, projectId }) => {
                 projectId={projectId}
               />
             </Box>
-          </Grid>
+          </Box>
         )}
       </Draggable>
     </div>

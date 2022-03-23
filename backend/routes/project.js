@@ -103,6 +103,17 @@ router.get("/:id", protectedRoutes, async (req, res) => {
                       as: "label",
                     },
                   },
+                  {
+                    $lookup: {
+                      from: "users",
+                      localField: "assignees",
+                      foreignField: "_id",
+                      as: "assignees",
+                    },
+                  },
+                  {
+                    $project: { assignees: { password: 0 } },
+                  },
                 ],
               },
             },
