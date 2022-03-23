@@ -11,7 +11,7 @@ import {
   Box,
   Typography,
 } from "@mui/material";
-import { FcTodoList } from "react-icons/fc";
+import { FcTodoList, FcTimeline, FcSalesPerformance } from "react-icons/fc";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useTheme } from "@mui/system";
 import { deepPurple } from "@mui/material/colors";
@@ -28,6 +28,11 @@ const Layout = ({ children }) => {
     {
       name: <Typography fontWeight={"bold"}>My Projects</Typography>,
       path: "/",
+      icon: <FcTodoList size={30} />,
+    },
+    {
+      name: <Typography fontWeight={"bold"}>Friends</Typography>,
+      path: "/s",
       icon: <FcTodoList size={30} />,
     },
   ];
@@ -68,7 +73,20 @@ const Layout = ({ children }) => {
               }}
               open
             >
-              <Typography sx={{ p: 3 }}>Knbrd</Typography>
+              <Box
+                sx={{
+                  display: "flex",
+                  p: 2,
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <Box>
+                  <FcSalesPerformance size={40} style={{ marginRight: 10 }} />
+                </Box>
+                <Typography fontWeight={"bold"}>Knbrd</Typography>
+              </Box>
+
               <Divider />
               <List sx={{ ml: 1, mr: 1 }}>
                 {paths.map((path) => (
@@ -82,8 +100,9 @@ const Layout = ({ children }) => {
                             background: deepPurple[50],
                             color: palette.primary.main,
                             borderRadius: 3,
+                            mt: 1,
                           }
-                        : null
+                        : { mt: 1, borderRadius: 3 }
                     }
                   >
                     <ListItemIcon>{path.icon}</ListItemIcon>

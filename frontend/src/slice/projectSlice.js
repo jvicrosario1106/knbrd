@@ -180,6 +180,35 @@ const projectReducer = createSlice({
           : column
       );
     },
+    taskByColumn: (state, action) => {
+      const { destination, draggableId, source } = action.payload;
+      const columnDestination = state.projects[0].columns.filter(
+        (column) => column._id === destination.droppableId
+      );
+      const columnSource = state.projects[0].columns.filter(
+        (column) => column._id === source.droppableId
+      );
+
+      //Initialize Array
+      const arraySource = Array.from(columnSource[0].task);
+      const arrayDestination = Array.from(columnDestination[0].task);
+
+      // Set and Remove Item
+      const [removedItem] = arraySource.splice(source.index, 1);
+      arrayDestination.splice(destination.index, 0, removedItem);
+
+      state.projects[0].columns = state.projects[0].columns.map((column) =>
+        column._id === source.droppableId
+          ? { ...column, task: arraySource }
+          : column
+      );
+
+      state.projects[0].columns = state.projects[0].columns.map((column) =>
+        column._id === destination.droppableId
+          ? { ...column, task: arrayDestination }
+          : column
+      );
+    },
   },
 
   extraReducers: (builder) => {
@@ -420,6 +449,6 @@ const projectReducer = createSlice({
   },
 });
 
-export const { reorder, reorderTask } = projectReducer.actions;
+export const { reorder, reorderTask, taskByColumn } = projectReducer.actions;
 
 export default projectReducer.reducer;

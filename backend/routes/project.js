@@ -6,6 +6,7 @@ const Project = require("../models/project");
 const Column = require("../models/column");
 const Tasks = require("../models/task");
 const Label = require("../models/label");
+const Task = require("../models/task");
 
 router.get("/", protectedRoutes, async (req, res) => {
   const user = req.user._id;
@@ -159,10 +160,11 @@ router.delete("/:id", protectedRoutes, async (req, res) => {
   }
 
   try {
-    const [project, column] = await Promise.all([
+    const [project, column, label, task] = await Promise.all([
       Project.findByIdAndRemove(id),
       Column.deleteMany({ project: id }),
       Label.deleteMany({ project: id }),
+      Task.deleteMany({ project: id }),
     ]);
     if (project) {
       res.status(200).json({

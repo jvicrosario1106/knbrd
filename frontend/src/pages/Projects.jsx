@@ -9,6 +9,7 @@ import {
   updateProjectName,
   reorderTask,
   taskOrder,
+  taskByColumn,
 } from "../slice/projectSlice";
 import { getLabel, createLabel, deleteLabel } from "../slice/labelSlice";
 import { useDispatch, useSelector } from "react-redux";
@@ -21,12 +22,14 @@ import {
   Menu,
   MenuItem,
   Button,
+  Grid,
 } from "@mui/material";
 import { DragDropContext, Droppable } from "react-beautiful-dnd";
 import Label from "../components/Label";
 import AddColumn from "../components/AddColumn";
 import Columns from "../components/Columns";
-import { FiSettings, FiTrash2 } from "react-icons/fi";
+import { FiTrash2 } from "react-icons/fi";
+import { FcSettings } from "react-icons/fc";
 import { useNavigate } from "react-router-dom";
 import InviteUser from "../components/InviteUser";
 import RenameProject from "../components/RenameProject";
@@ -133,7 +136,7 @@ const Projects = () => {
         dispatch(reorderTask(result));
         dispatch(taskOrder({ column: destination.droppableId }));
       } else {
-        console.log("Not Equal");
+        dispatch(taskByColumn(result));
       }
     }
   };
@@ -161,7 +164,7 @@ const Projects = () => {
             <Typography variant="h4" fontWeight={"bold"}>
               {projects[0].name}{" "}
               <IconButton onClick={handleClick}>
-                <FiSettings />
+                <FcSettings size={30} />
               </IconButton>
             </Typography>
 
@@ -219,7 +222,7 @@ const Projects = () => {
             </Box>
 
             <Typography>
-              This project has {projects[0].columns.length} columns and{" "}
+              This project has {projects[0].columns.length} boards and{" "}
               {projects[0].user.length} members
             </Typography>
 
@@ -228,20 +231,9 @@ const Projects = () => {
               <InviteUser />
             </Box>
 
-            <Typography
-              sx={{ mt: 1, mb: 1, opacity: 0.6 }}
-              variant="h5"
-              fontWeight={"bold"}
-            >
-              Task and Columns
-            </Typography>
-
-            <Divider />
-
             <DragDropContext onDragEnd={(result) => handleColumnDrag(result)}>
               <Box
                 sx={{
-                  mt: 2,
                   display: "flex",
                   overflowX: "scroll",
                   p: 1,
@@ -266,7 +258,13 @@ const Projects = () => {
                     >
                       {projects[0].columns.length > 0 ? (
                         projects[0].columns.map((column, index) => (
-                          <Box key={column._id}>
+                          <Grid
+                            container
+                            key={column._id}
+                            sx={{
+                              height: "65vh",
+                            }}
+                          >
                             <Columns
                               column={column}
                               index={index}
@@ -274,7 +272,7 @@ const Projects = () => {
                               assignees={projects[0].user}
                               projectId={projects[0]._id}
                             />
-                          </Box>
+                          </Grid>
                         ))
                       ) : (
                         <Typography>No Available Column</Typography>

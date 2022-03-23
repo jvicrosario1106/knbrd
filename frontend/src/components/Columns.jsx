@@ -6,6 +6,7 @@ import {
   Menu,
   MenuItem,
   Paper,
+  Grid,
 } from "@mui/material";
 import React, { useState } from "react";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
@@ -58,15 +59,18 @@ const Columns = ({ column, index, labels, assignees, projectId }) => {
       </Menu>
       <Draggable key={column._id} draggableId={`${column._id}`} index={index}>
         {(provided, snapshot) => (
-          <Box
+          <Grid
+            item
+            lg={12}
+            md={12}
             sx={{
-              display: "flex",
-              flexDirection: "column",
+              // display: "flex",
+              // flexDirection: "column",
               // boxShadow: "-1px 2px 10px -2px rgba(0,0,0,0.43);",
-              height: "53vh",
+              height: "60vh",
               mr: 1,
               p: 2,
-              width: "19vw",
+              width: "23vw",
               background: snapshot.isDragging && blue[50],
             }}
             ref={provided.innerRef}
@@ -98,7 +102,7 @@ const Columns = ({ column, index, labels, assignees, projectId }) => {
               >
                 {(provided, snapshot) => (
                   <div
-                    style={{ overflowY: "scroll", p: 1, height: "45vh" }}
+                    style={{ overflowY: "scroll", p: 1, height: "53vh" }}
                     ref={provided.innerRef}
                     {...provided.droppableProps}
                   >
@@ -150,7 +154,7 @@ const Columns = ({ column, index, labels, assignees, projectId }) => {
                 projectId={projectId}
               />
             </Box>
-          </Box>
+          </Grid>
         )}
       </Draggable>
     </div>
