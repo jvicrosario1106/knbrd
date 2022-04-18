@@ -6,19 +6,40 @@ const Column = require("../models/column");
 router.post("/", async (req, res) => {
   try {
     const task = await Task.create(req.body);
-
+    
     if (task) {
-      const column = await Column.updateOne(
+      const [column,newTask] = await Promise.all([Column.updateOne(
         { _id: req.body.column },
         { $push: { task: { $each: [task._id], $position: 0 } } }
-      );
+      ), Task.aggregate([{
+        $match:{_id:task._id}
+      },
+    {
+      $lookup:{
+        from:"users",
+        as:"assignees",
+        localField:"assignees",
+        foreignField:"_id"
+      }
+    },
+    {
+      $lookup:{
+        from:"labels",
+        as:"label",
+        localField:"label",
+        foreignField:"_id"
+      }
+    }
+  ]
+      )]);
+
       if (column) {
-        res.status(200).json(task);
+        res.status(200).json(newTask);
       }
     }
   } catch (err) {
     res.status(400).json({
-      message: "Successfully Created new task",
+      message: "Failed to create new task",
     });
   }
 });

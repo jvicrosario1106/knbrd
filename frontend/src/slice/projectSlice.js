@@ -99,7 +99,7 @@ export const columnOrder = createAsyncThunk(
   "column/columnOrder",
   async (data, thunkAPI) => {
     const { projectReducer } = thunkAPI.getState();
-
+    console.log(projectReducer.projects[0].columns)
     try {
       await API_URL.patch("/api/columns/columnOrder", {
         project: data.project,
@@ -158,6 +158,18 @@ export const taskOrder = createAsyncThunk(
     }
   }
 );
+
+export const taskOrderByColumn = createAsyncThunk(
+  "project/taskOrderByColumn",
+  async(data, thunkAPI)=>{
+    try {
+      
+    } catch (err) {
+      const {message} = err.response.data
+      return thunkAPI.rejectWithValue(message)
+    }
+  }
+)
 
 const initialState = {
   isCreated: null,
@@ -444,10 +456,11 @@ const projectReducer = createSlice({
         state.isSuccess = true;
         state.isLoading = false;
         state.isFailed = false;
+        console.log(action.payload)
         const getColumn = state.projects[0].columns.filter(
-          (column) => column._id === action.payload.column
+          (column) => column._id === action.payload[0].column
         );
-        const getTasks = getColumn[0].task.unshift(action.payload);
+        const getTasks = getColumn[0].task.unshift(action.payload[0]);
 
         state.projects[0].columns = state.projects[0].columns.map((column) =>
           column._id === action.payload.column
