@@ -27,6 +27,7 @@ const AddTask = ({ labels, assignees, columnId, projectId }) => {
     boxShadow: 24,
     p: 4,
   };
+
   const dispatch = useDispatch();
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);

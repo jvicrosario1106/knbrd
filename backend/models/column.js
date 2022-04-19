@@ -7,13 +7,16 @@ const columnSchema = Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Project",
     },
+
     name: {
       type: String,
     },
+
     order: {
       type: Number,
       default: 0,
     },
+
     task: [{ type: mongoose.Schema.Types.ObjectId, ref: "Task" }],
   },
   { timestamps: true }
