@@ -25,7 +25,7 @@ const Task = ({ task, columnId }) => {
       <Grid container spacing={1}>
         {task.label.length > 0 &&
           task.label.map((l) => (
-            <Grid item>
+            <Grid item key={l._id}>
               <Typography
                 sx={{ backgroundColor: l.color, color: "white", p: 0.3 }}
                 variant="body2"

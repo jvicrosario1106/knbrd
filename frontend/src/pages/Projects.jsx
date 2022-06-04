@@ -10,6 +10,7 @@ import {
   reorderTask,
   taskOrder,
   taskByColumn,
+  taskOrderByColumn,
 } from "../slice/projectSlice";
 import { getLabel, createLabel, deleteLabel } from "../slice/labelSlice";
 import { useDispatch, useSelector } from "react-redux";
@@ -137,6 +138,7 @@ const Projects = () => {
         dispatch(taskOrder({ column: destination.droppableId }));
       } else {
         dispatch(taskByColumn(result));
+        dispatch(taskOrderByColumn({ result, id }));
       }
     }
   };

@@ -99,7 +99,7 @@ export const columnOrder = createAsyncThunk(
   "column/columnOrder",
   async (data, thunkAPI) => {
     const { projectReducer } = thunkAPI.getState();
-    console.log(projectReducer.projects[0].columns)
+    console.log(projectReducer.projects[0].columns);
     try {
       await API_URL.patch("/api/columns/columnOrder", {
         project: data.project,
@@ -161,15 +161,29 @@ export const taskOrder = createAsyncThunk(
 
 export const taskOrderByColumn = createAsyncThunk(
   "project/taskOrderByColumn",
-  async(data, thunkAPI)=>{
+  async (data, thunkAPI) => {
+    const { projectReducer } = thunkAPI.getState();
+    const getPreviousTask = projectReducer.projects[0].columns.filter(
+      (column) => column._id === data.result.source.droppableId
+    );
+    const getNewTask = projectReducer.projects[0].columns.filter(
+      (column) => column._id === data.result.destination.droppableId
+    );
+
     try {
-      
+      await API_URL.patch("/api/tasks/taskOrderByColumn", {
+        projectId: data.id,
+        sourceColumn: data.result.source.droppableId,
+        sourceTasks: getPreviousTask[0].task,
+        destinationColumn: data.result.destination.droppableId,
+        destinationTask: getNewTask[0].task,
+      });
     } catch (err) {
-      const {message} = err.response.data
-      return thunkAPI.rejectWithValue(message)
+      const { message } = err.response.data;
+      return thunkAPI.rejectWithValue(message);
     }
   }
-)
+);
 
 const initialState = {
   isCreated: null,
@@ -185,6 +199,7 @@ const projectReducer = createSlice({
   name: "projects",
   initialState,
   reducers: {
+    // Column
     reorder: (state, action) => {
       const { destination, draggableId, source } = action.payload;
       const item = Array.from(state.projects[0].columns);
@@ -192,6 +207,7 @@ const projectReducer = createSlice({
       item.splice(destination.index, 0, removedItem);
       state.projects[0].columns = item;
     },
+    // Order Task Inside Column
     reorderTask: (state, action) => {
       const { destination, draggableId, source } = action.payload;
       const getColumn = state.projects[0].columns.filter(
@@ -207,6 +223,7 @@ const projectReducer = createSlice({
           : column
       );
     },
+    // Order Task By Column
     taskByColumn: (state, action) => {
       const { destination, draggableId, source } = action.payload;
       const columnDestination = state.projects[0].columns.filter(
@@ -456,7 +473,7 @@ const projectReducer = createSlice({
         state.isSuccess = true;
         state.isLoading = false;
         state.isFailed = false;
-        console.log(action.payload)
+        console.log(action.payload);
         const getColumn = state.projects[0].columns.filter(
           (column) => column._id === action.payload[0].column
         );
@@ -493,6 +510,30 @@ const projectReducer = createSlice({
         state.isFailed = false;
       })
       .addCase(taskOrder.rejected, (state, action) => {
+        state.isCreated = false;
+        state.isUpdated = false;
+        state.isDeleted = false;
+        state.isSuccess = false;
+        state.isLoading = false;
+        state.isFailed = true;
+      })
+
+      .addCase(taskOrderByColumn.pending, (state, action) => {
+        state.isCreated = false;
+        state.isUpdated = false;
+        state.isDeleted = false;
+        state.isSuccess = false;
+        state.isFailed = false;
+      })
+      .addCase(taskOrderByColumn.fulfilled, (state, action) => {
+        state.isCreated = false;
+        state.isUpdated = false;
+        state.isDeleted = false;
+        state.isSuccess = true;
+        state.isLoading = false;
+        state.isFailed = false;
+      })
+      .addCase(taskOrderByColumn.rejected, (state, action) => {
         state.isCreated = false;
         state.isUpdated = false;
         state.isDeleted = false;

@@ -81,7 +81,7 @@ const Columns = ({ column, index, labels, assignees, projectId }) => {
                     ref={provided.innerRef}
                     {...provided.droppableProps}
                   >
-                    {column.task.length > 0 &&
+                    {column.task?.length > 0 &&
                       column.task.map((task, index) => (
                         <Draggable
                           key={task._id}
